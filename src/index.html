@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Rooms</title>
+</head>
+
+<body>
+  <h1>Upload Rooms with Images</h1>
+  <form id="roomForm" enctype="multipart/form-data">
+    <div id="roomSets">
+      <!-- Initial room set -->
+      <div class="roomSet">
+        <div>
+          <label for="name">Name:</label>
+          <input type="text" name="rooms[0][name]" required>
+        </div>
+        <div>
+          <label for="description">Description:</label>
+          <textarea name="rooms[0][description]" required></textarea>
+        </div>
+        <div>
+          <label for="building">Building:</label>
+          <input type="text" name="rooms[0][building]" required>
+        </div>
+        <div>
+          <label for="image">Image:</label>
+          <input type="file" name="rooms[0][image]" required multiple>
+        </div>
+      </div>
+    </div>
+    <button type="button" id="addMore">Add More</button>
+    <button type="submit">Upload</button>
+  </form>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+    document.getElementById('addMore').addEventListener('click', () => {
+      const roomSets = document.getElementById('roomSets');
+      const roomCount = roomSets.children.length;
+      const newRoomSet = document.createElement('div');
+      newRoomSet.className = 'roomSet';
+      newRoomSet.innerHTML = `
+        <div>
+          <label for="name">Name:</label>
+          <input type="text" name="rooms[${roomCount}][name]" required>
+        </div>
+        <div>
+          <label for="description">Description:</label>
+          <textarea name="rooms[${roomCount}][description]" required></textarea>
+        </div>
+        <div>
+          <label for="building">Building:</label>
+          <input type="text" name="rooms[${roomCount}][building]" required>
+        </div>
+        <div>
+  <label for="image">Image:</label>
+  <input type="file" name="rooms[${roomCount}][image]" required multiple>
+</div>
+
+      `;
+      roomSets.appendChild(newRoomSet);
+    });
+
+    document.getElementById('roomForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      try {
+        const response = await axios.post('http://localhost:3000/v1/room', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        console.log(response.data);
+        alert('Rooms uploaded successfully');
+      } catch (error) {
+        console.error(error);
+        alert('Error uploading rooms');
+      }
+    });
+  </script>
+</body>
+
+</html>
